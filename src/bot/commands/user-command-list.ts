@@ -1,5 +1,5 @@
 import { CommandModel,CommandName } from "./model";
-import { help, status,start, getQuote } from "./functions";
+import { help, status,start, quote } from "./functions";
 
 export const userCommandList: CommandModel[] = [
   {
@@ -16,7 +16,7 @@ export const userCommandList: CommandModel[] = [
   },
   {
     command: CommandName.GET_QUOTE,
-    function: getQuote
+    function: quote
   },
   
 ];

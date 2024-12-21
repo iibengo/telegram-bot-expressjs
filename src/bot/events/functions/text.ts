@@ -5,6 +5,6 @@ import { EventName } from "../model";
 
 export const text = (bot: Telegraf<Context<Update>>) =>
   bot.on(EventName.TEXT, (ctx) => {
-    if (ctx.from.id !== config.ADMIN_USER_ID) return;
+    if (ctx.from.id !== config.TELEGRAM_ADMIN_USER_ID) return;
    // ctx.reply(`Mensaje de Admin: ${ctx.message.text}`);
   });

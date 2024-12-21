@@ -7,7 +7,7 @@ const messageNameToMessageMap = new Map<MessageName, string>([
   ],
   [
     MessageName.START,
-    `Hola {0}! 👋 Bienvenido al bot`,
+    `Hola {0}! 👋 Bienvenido al bot \nVer /help para ayuda`,
   ],
 ]);
 export const getMessage = (name: MessageName) => {
