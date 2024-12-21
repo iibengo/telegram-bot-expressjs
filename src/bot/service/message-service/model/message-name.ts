@@ -1,3 +1,4 @@
 export enum MessageName {
-    HELP="help"
+    HELP="help",
+    START="start"
 }

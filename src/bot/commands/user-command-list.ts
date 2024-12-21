@@ -1,7 +1,11 @@
 import { CommandModel,CommandName } from "./model";
-import { help, status } from "./functions";
+import { help, status,start } from "./functions";
 
 export const userCommandList: CommandModel[] = [
+  {
+    command: CommandName.START,
+    function: start
+  },
   {
     command: CommandName.HELP,
     function: help

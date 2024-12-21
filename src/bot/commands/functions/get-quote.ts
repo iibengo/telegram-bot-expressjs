@@ -3,7 +3,7 @@ import { Context, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
 import { config } from "../../../config/config";
 
-export const status = async (bot: Telegraf<Context<Update>>) =>
+export const getQuote = async (bot: Telegraf<Context<Update>>) =>
   bot.command("status", async (ctx) => {
     try {
       const response = await axios.get(

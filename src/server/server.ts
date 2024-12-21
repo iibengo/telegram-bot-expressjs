@@ -8,5 +8,7 @@ app.get('/', (req: Request, res: Response) => {
 app.get('/api/status', (req: Request, res: Response) => {
   res.send('Servidor funcionando 🚀');
 });
-
+app.get('/api/getQuote', (req: Request, res: Response) => {
+  res.send('Servidor funcionando 🚀');
+});
 export default app;

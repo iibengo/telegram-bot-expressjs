@@ -3,7 +3,11 @@ import { MessageName } from "./model/message-name";
 const messageNameToMessageMap = new Map<MessageName, string>([
   [
     MessageName.HELP,
-    "Estos son los comandos disponibles:\n/start - Inicia el bot\n/help - Ayuda",
+    "Estos son los comandos disponibles:\n/help - Ayuda",
+  ],
+  [
+    MessageName.START,
+    `Hola {0}! 👋 Bienvenido al bot`,
   ],
 ]);
 export const getMessage = (name: MessageName) => {

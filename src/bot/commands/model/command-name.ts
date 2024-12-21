@@ -1,4 +1,5 @@
 export enum CommandName{
     HELP="help",
-    STATUS="status"
+    STATUS="status",
+    START="start"
 }
