@@ -1,18 +1,7 @@
-import axios from "axios";
 import { Context, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
-import { config } from "../../../config/config";
 
-export const getQuote = async (bot: Telegraf<Context<Update>>) =>
-  bot.command("status", async (ctx) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:${config.PORT}/api/status`
-      );
-      const data = response.data;
-      ctx.reply(`${data}`);
-    } catch (error) {
-      console.error("Error al obtener el estado del servidor:", error);
-      ctx.reply("❌ No se pudo obtener el estado del servidor.");
-    }
+export const getQuote =  (bot: Telegraf<Context<Update>>) =>
+  bot.command("quote", async (ctx) => {
+    ctx.reply("get quote");
   });
