@@ -3,7 +3,7 @@ import { MessageName } from "./model/message-name";
 const messageNameToMessageMap = new Map<MessageName, string>([
   [
     MessageName.HELP,
-    "Estos son los comandos disponibles:\n/help - Ayuda",
+    "Estos son los comandos disponibles:\n/start - Menu principal\n/help - Ayuda\n/status - Estado del servidor\n/quote - Cotización",
   ],
   [
     MessageName.START,
