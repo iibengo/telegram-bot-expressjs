@@ -1,30 +1,48 @@
-import { Connection } from "@solana/web3.js";
+import { Request } from "express";
+import { createJupiterApiClient, QuoteGetRequest } from "../../../web3/jup-ag"; // Ajusta la ruta según sea necesario
 import * as dotenv from "dotenv";
-import { createJupiterApiClient, QuoteGetRequest } from "../../../web3/jup-ag";
-import { config } from "../../../config/config";
+import { getTokenInfo } from "../../../web3/token";
+import { GetQuoteOperationServiceResponse } from "./getQuoteOperationServiceSchema";
 dotenv.config();
 
-const connection = new Connection(config.SOLANA_RPC_URL_MAINNET);
 const jupiterQuoteApi = createJupiterApiClient();
 
 export class GetQuoteOperationService {
-  async price() {
-    const params: QuoteGetRequest = {
-      inputMint: "So11111111111111111111111111111111111111112",
-      outputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", // USDC
-      amount: 1e9, // 1 SOL in lamports
-    };
+  async price(req: Request): Promise<GetQuoteOperationServiceResponse> {
+    const { amount, inputMint, outputMint } = req.body || req.query;
+    if (!amount || !inputMint || !outputMint) {
+      throw new Error(
+        "Faltan parámetros: 'amount', 'inputMint' y 'outputMint' son requeridos."
+      );
+    }
 
     try {
+      const inputInfo = await getTokenInfo(inputMint);
+      const outputInfo = await getTokenInfo(outputMint);
+
+      const amountInLamports =
+        Number(amount) * Math.pow(10, inputInfo.decimals);
+      const params: QuoteGetRequest = {
+        inputMint: String(inputMint),
+        outputMint: String(outputMint),
+        amount: amountInLamports,
+      };
+
       const quote = await jupiterQuoteApi.quoteGet(params);
 
       if (!quote || !quote.outAmount) {
         throw new Error("Unable to fetch quote");
       }
-
-      // Calcula el precio por 1 SOL en USDC
-      const solPrice = Number(quote.outAmount) / 1e6; // Convertir de micro USDC a USDC
-      return { solPrice };
+      const outputAmount =
+        Number(quote.outAmount) / Math.pow(10, outputInfo.decimals);
+      const response: GetQuoteOperationServiceResponse = {
+        input: {
+          name: inputInfo.name,
+        },
+        output: { name: outputInfo.name },
+        outputAmount,
+      };
+      return response;
     } catch (error) {
       console.error("Error fetching SOL price:", error);
       throw error;
