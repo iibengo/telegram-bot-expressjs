@@ -12,6 +12,7 @@ class BotService {
   }
   private loadBotConfig() {
     this._bot.use(session());
+    //init sesion
     BotServiceManager.loadComands(this._bot);
     BotServiceManager.loadEvents(this._bot);
   }
