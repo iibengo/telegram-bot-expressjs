@@ -1,14 +1,25 @@
 import { Request } from "express";
-import { createJupiterApiClient, QuoteGetRequest } from "../../../web3/jup-ag"; // Ajusta la ruta según sea necesario
+import {
+  createJupiterApiClient,
+  QuoteGetRequest,
+} from "../../../../web3/jup-ag"; // Ajusta la ruta según sea necesario
 import * as dotenv from "dotenv";
-import { getTokenInfo } from "../../../web3/token";
+import { tokenContext } from "../../../../web3/token";
 import { GetQuoteOperationServiceResponse } from "./getQuoteOperationServiceSchema";
+import { GenericService } from "../../../model/service";
 dotenv.config();
 
 const jupiterQuoteApi = createJupiterApiClient();
 
-export class GetQuoteOperationService {
-  async price(req: Request): Promise<GetQuoteOperationServiceResponse> {
+export class GetQuoteOperationService implements GenericService<any, any> {
+  path!: string;
+  serviceValidation = () => [];
+
+  constructor(path: string) {
+    this.path = path;
+  }
+
+  async service(req: Request): Promise<GetQuoteOperationServiceResponse> {
     const { amount, inputMint, outputMint } = req.body || req.query;
     if (!amount || !inputMint || !outputMint) {
       throw new Error(
@@ -17,8 +28,8 @@ export class GetQuoteOperationService {
     }
 
     try {
-      const inputInfo = await getTokenInfo(inputMint);
-      const outputInfo = await getTokenInfo(outputMint);
+      const inputInfo = await tokenContext.getTokenInfo(inputMint);
+      const outputInfo = await tokenContext.getTokenInfo(outputMint);
 
       const amountInLamports =
         Number(amount) * Math.pow(10, inputInfo.decimals);
@@ -50,4 +61,6 @@ export class GetQuoteOperationService {
   }
 }
 
-export const getQuoteOperationService = new GetQuoteOperationService();
+export const getQuoteOperationService = new GetQuoteOperationService(
+  "/quote/getQuoteOperation"
+);

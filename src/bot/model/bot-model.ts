@@ -2,25 +2,27 @@ import { Context, NarrowedContext, Telegraf } from "telegraf";
 
 import { Message, Update } from "telegraf/typings/core/types/typegram";
 
-export interface BotSession {
+ interface BotSessionModel {
+    flow?:string
     step?: number;
+    messageId?:number;
     data?: {
       amount?: string;
       inputMint?: string;
       outputMint?: string;
     };
   }
+   
+  export interface BotSessionContext extends Context {
+    session: BotSessionModel;
+  }
   
   // Tipo de contexto para el bot, con la sesión añadida
-  export type BotQuoteContext = NarrowedContext<
-    BotQuoteSession,
+  export type BotContext = NarrowedContext<
+  BotSessionContext,
     {
       message: Update.New & Update.NonChannel & Message.TextMessage;
       update_id: number;
     }
   >;
-  
-  export interface BotQuoteSession extends Context {
-    session: BotSession;
-  }
-  
+ 

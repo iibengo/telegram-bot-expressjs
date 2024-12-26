@@ -1,27 +1,80 @@
-import express, { Request, Response } from 'express';
-import { getQuoteOperationService } from './api/getQuoteOperationService/getQuoteOperationService';
+import express, { Request, Response, Express } from "express";
+import { getQuoteOperationService } from "./service/v1/getQuoteOperationService/getQuoteOperationService";
 import bodyParser from "body-parser";
-const app = express();
-
-app.use(bodyParser.json()); // Middleware para procesar JSON en el body
-app.use(express.json());
-
-app.get('/', (req: Request, res: Response) => {
-  res.send('Servidor funcionando 🚀');
-});
-app.get('/api/status', (req: Request, res: Response) => {
-  res.send('Servidor funcionando 🚀');
-});
-app.post("/api/quote", async (req: Request, res: Response) => {
+import { swapOperationService } from "./service/v1/swapOperationService/swapOperationService";
+import { mongooseConnection } from "../database/mongo/connection";
+import cors from "cors";
+import { userRouteList } from "./routes/get-routes";
+import { errorHandler } from "./middlewares/validation/error/error-handler";
+import { AppErrorService } from "./cross/error/app-error";
+import { config } from "../config/config";
+/*
+app.post("/api/swap", async (req: Request, res: Response) => {
   try {
-    // Llamar al servicio y pasar la solicitud completa (req)
-    const quote = await getQuoteOperationService.price(req);
-
-    // Devolver la respuesta
+    const quote = await swapOperationService.service(req);
     res.status(200).json({ success: true, data: quote });
   } catch (error) {
     console.error("Error fetching quote:", error);
     res.status(500).json({ success: false, message: "Error fetching quote" });
   }
 });
-export default app;
+export default app;*/
+export class ExpressServer {
+  public app!: Express;
+  private port!: string;
+  constructor() {
+    this.app = express();
+    this.port = config.PORT.toString();
+    this.connectDB();
+    this.middlewares();
+    this.routes();
+    this.errorHandlers();
+  }
+
+  async connectDB() {
+    await mongooseConnection();
+  }
+
+  middlewares() {
+    const allowedOrigins = [process.env.SERVER, process.env.LOCAL_APP_CLIENT];
+
+    this.app.use((req, res, next) => {
+      cors({
+        origin: (origin, callback) => {
+          if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+          } else {
+            next(
+              AppErrorService.getErrorByMessage("Origen no permitido por CORS")
+            ); 
+          }
+        },
+        credentials: true,
+      })(req, res, next);
+    });
+
+    this.app.use(bodyParser.json());
+    this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use(express.static("public"));
+  }
+
+  routes() {
+    setupRoutes(this.app);
+  }
+
+  errorHandlers() {
+    this.app.use(errorHandler);
+  }
+}
+export const setupRoutes = (app: Express) => {
+  // todo: add validatios to routes
+  //app.use(publicRouteList.path, publicRouteList.route);
+  // app.all("*", validateJWT);
+  // app.all("*", hasRole(roleList));
+  // User routes
+  //app.use("/api/v1", hasRole([RoleName.USER, RoleName.ADMIN]));
+  userRouteList().forEach((serviceRoute) => {
+    app.use("/api/v1", serviceRoute);
+  });
+  // Admin routes
+};
