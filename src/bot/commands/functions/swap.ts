@@ -42,7 +42,7 @@ const handleAmountStep = async (ctx: BotContext) => {
     );
   }
   ctx.session.data!.amount = amount;
-  ctx.session.step = 2; // Avanza al siguiente paso
+  ctx.session.step = 2;
   await ctx.reply("*Token* de entrada:", { parse_mode: "Markdown" });
 };
 

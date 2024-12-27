@@ -4,7 +4,7 @@ export const getTokenDetailsFromRegistry = async (mintAddress: string) => {
   try {
     const tokenList = await new TokenListProvider().resolve();
     const tokens = tokenList.filterByChainId(101).getList(); // 101 Mainnet
-
+    //todo filter by name
     const tokenInfo = tokens.find((token) => token.address === mintAddress);
 
     if (tokenInfo) {
