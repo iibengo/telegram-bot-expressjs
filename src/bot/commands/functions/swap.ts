@@ -73,7 +73,7 @@ const handleOutputTokenStep = async (ctx: BotContext) => {
 };
 
 const isValidContract = (contract: string): boolean => {
-  return contract.length >= 32 && contract.length <= 44;
+  return contract.length >= 0;
 };
 const doSwap = async (ctx: BotContext) => {
   const { amount, inputMint, outputMint } = ctx.session.data!;

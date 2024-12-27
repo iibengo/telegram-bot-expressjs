@@ -15,10 +15,12 @@ export const swapTokensForTokens = async (
   outputMint: any
 ) => {
   const inputInfo = await tokenContext.getTokenInfo(inputMint);
+
+  const outputInfo = await tokenContext.getTokenInfo(outputMint);
   const amountInLamports = Number(amount) * Math.pow(10, inputInfo.decimals);
   const params = {
-    inputMint: String(inputMint),
-    outputMint: String(outputMint),
+    inputMint: String(inputInfo.address),
+    outputMint: String(outputInfo.address),
     amount: amountInLamports,
   };
 
