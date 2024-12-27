@@ -77,13 +77,13 @@ const handleOutputTokenStep = async (ctx: BotContext) => {
   }
 };
 const isValidContract = (contract: string): boolean => {
-  return contract.length >= 32 && contract.length <= 44;
+  return contract.length >= 0
 };
 const fetchQuote = async (ctx: BotContext) => {
   const { amount, inputMint, outputMint } = ctx.session.data!;
   const response = await axios.post(
     `http://localhost:${config.PORT}/api/v1/quote/getQuoteOperation`,
-    { amount, inputMint, outputMint }
+    { amount, inputTokenQuery:inputMint, outputTokenQuery:outputMint }
   );
   return response.data; 
 };

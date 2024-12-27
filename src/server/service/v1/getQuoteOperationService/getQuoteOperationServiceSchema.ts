@@ -1,9 +1,9 @@
 export interface GetQuoteOperationServiceResponse{
     input:{
-        name:string
+        name?:string
     },
     output:{
-        name:string,
+        name?:string,
     },
     outputAmount:number
 }

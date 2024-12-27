@@ -1,17 +1,19 @@
 import { TokenListProvider } from "@solana/spl-token-registry";
 
-export const getTokenDetailsFromRegistry = async (mintAddress: string) => {
+export const getTokenDetailsFromRegistry = async (query: string) => {
   try {
     const tokenList = await new TokenListProvider().resolve();
-    const tokens = tokenList.filterByChainId(101).getList(); // 101 Mainnet
-    //todo filter by name
-    const tokenInfo = tokens.find((token) => token.address === mintAddress);
-
+    const tokens = tokenList.filterByChainId(101).getList(); 
+    const tokenInfo = tokens.find((token) => 
+      token.address === query || 
+      token.symbol.toLowerCase() === query.toLowerCase()
+    );
     if (tokenInfo) {
       return {
         name: tokenInfo.name,
         symbol: tokenInfo.symbol,
         decimals: tokenInfo.decimals,
+        address: tokenInfo.address
       };
     } else {
       return {

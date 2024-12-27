@@ -20,22 +20,26 @@ export class GetQuoteOperationService implements GenericService<any, any> {
   }
 
   async service(req: Request): Promise<GetQuoteOperationServiceResponse> {
-    const { amount, inputMint, outputMint } = req.body || req.query;
-    if (!amount || !inputMint || !outputMint) {
+    const { amount, inputTokenQuery, outputTokenQuery } = req.body || req.query;
+    if (!amount || !inputTokenQuery || !outputTokenQuery) {
       throw new Error(
         "Faltan parámetros: 'amount', 'inputMint' y 'outputMint' son requeridos."
       );
     }
 
     try {
-      const inputInfo = await tokenContext.getTokenInfo(inputMint);
-      const outputInfo = await tokenContext.getTokenInfo(outputMint);
-
+      const inputInfo = await tokenContext.getTokenInfo(inputTokenQuery);
+      const outputInfo = await tokenContext.getTokenInfo(outputTokenQuery);
+      if (!inputInfo.address || !outputInfo.address) {
+        throw new Error(
+          "No se han encontrado los tokens"
+        );
+      }
       const amountInLamports =
         Number(amount) * Math.pow(10, inputInfo.decimals);
       const params: QuoteGetRequest = {
-        inputMint: String(inputMint),
-        outputMint: String(outputMint),
+        inputMint: String(inputInfo.address),
+        outputMint: String(outputInfo.address),
         amount: amountInLamports,
       };
 

@@ -1,5 +1,6 @@
 export interface TokenInfoModel {
-  name: string;
+  name?: string;
+  symbol?:string;
   decimals: number;
-  mint?: string;
+  address: string;
 }
