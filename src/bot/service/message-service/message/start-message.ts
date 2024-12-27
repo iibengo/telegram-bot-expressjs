@@ -10,7 +10,7 @@ export const getStartMessage = (_data?: StartMessageModel) => {
         solPrice: 25.3,
         portfolio24hGainPercentage: 3.5,
         solPrice24hGainPercentage: 12,
-        tokenHoldingAmount: 5, 
+        tokenHoldingAmount: 5,
       };
   const message = {
     text: `*Farah Bot* (vBeta-0.1), tu compañero en criptomonedas. 🚀

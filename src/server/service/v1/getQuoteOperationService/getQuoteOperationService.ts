@@ -7,6 +7,7 @@ import * as dotenv from "dotenv";
 import { tokenContext } from "../../../../web3/token";
 import { GetQuoteOperationServiceResponse } from "./getQuoteOperationServiceSchema";
 import { GenericService } from "../../../model/service";
+import { TokenInfoModel } from "../../../../web3/model";
 dotenv.config();
 
 const jupiterQuoteApi = createJupiterApiClient();
@@ -23,18 +24,14 @@ export class GetQuoteOperationService implements GenericService<any, any> {
     const { amount, inputTokenQuery, outputTokenQuery } = req.body || req.query;
     if (!amount || !inputTokenQuery || !outputTokenQuery) {
       throw new Error(
-        "Faltan parámetros: 'amount', 'inputMint' y 'outputMint' son requeridos."
+        "Faltan parámetros: 'amount', 'inputMint' y 'outputTokenQuery' son requeridos."
       );
     }
 
     try {
       const inputInfo = await tokenContext.getTokenInfo(inputTokenQuery);
       const outputInfo = await tokenContext.getTokenInfo(outputTokenQuery);
-      if (!inputInfo.address || !outputInfo.address) {
-        throw new Error(
-          "No se han encontrado los tokens"
-        );
-      }
+
       const amountInLamports =
         Number(amount) * Math.pow(10, inputInfo.decimals);
       const params: QuoteGetRequest = {
@@ -50,18 +47,28 @@ export class GetQuoteOperationService implements GenericService<any, any> {
       }
       const outputAmount =
         Number(quote.outAmount) / Math.pow(10, outputInfo.decimals);
-      const response: GetQuoteOperationServiceResponse = {
-        input: {
-          name: inputInfo.name,
-        },
-        output: { name: outputInfo.name },
-        outputAmount,
-      };
+      const response: GetQuoteOperationServiceResponse = this.getResponse(inputInfo, outputInfo, outputAmount);
       return response;
     } catch (error) {
       console.error("Error fetching SOL price:", error);
       throw error;
     }
+  }
+
+  private getResponse(inputInfo: TokenInfoModel, outputInfo: TokenInfoModel, outputAmount: number): GetQuoteOperationServiceResponse {
+    return {
+      input: {
+        name: inputInfo.name,
+        symbol: inputInfo.symbol,
+        address: inputInfo.address,
+      },
+      output: {
+        name: outputInfo.name,
+        address: outputInfo.address,
+        symbol: outputInfo.symbol,
+      },
+      outputAmount,
+    };
   }
 }
 

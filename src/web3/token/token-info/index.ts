@@ -1,1 +1,2 @@
-export * from './get-token-details'
+export * from './get-token-decimals'
+export * from './get-token-metadata'
