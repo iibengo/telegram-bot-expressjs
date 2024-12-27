@@ -14,7 +14,7 @@ export const initializeQuote = async (ctx: BotContext) => {
     step: 1,
     data: {},
   };
-  await ctx.reply("*Cantidad* de entrada:", { parse_mode: "Markdown" });
+  await ctx.reply("*Cantidad* de  entrada", { parse_mode: "Markdown" });
 };
 export const handleQuoteFlow = async (ctx: BotContext) => {
   switch (ctx.session.step) {
@@ -42,25 +42,25 @@ const handleAmountStep = async (ctx: BotContext) => {
 
   ctx.session.data!.amount = amount;
   ctx.session.step = 2; 
-  await ctx.reply("*Token* de entrada:", { parse_mode: "Markdown" });
+  await ctx.reply("*Direccion o símbolo* del token de entrada", { parse_mode: "Markdown" });
 };
 const handleInputTokenStep = async (ctx: BotContext) => {
   const inputMint = ctx.message.text;
   if (!isValidContract(inputMint)) {
     return await ctx.reply(
-      "❌ Por favor, escribe un contrato (Mint Address) válido."
+      "❌ Por favor, escribe un contrato (Mint Address) o símbolo válidos."
     );
   }
 
   ctx.session.data!.inputMint = inputMint;
   ctx.session.step = 3;
-  await ctx.reply("*Token* de salida:", { parse_mode: "Markdown" });
+  await ctx.reply("*Direccion o símbolo* del token de salida", { parse_mode: "Markdown" });
 };
 const handleOutputTokenStep = async (ctx: BotContext) => {
   const outputMint = ctx.message.text;
   if (!isValidContract(outputMint)) {
     return await ctx.reply(
-      "❌ Por favor, escribe un contrato (Mint Address) válido."
+      "❌ Por favor, escribe un contrato (Mint Address)  o símbolo válidos."
     );
   }
 
@@ -77,37 +77,37 @@ const handleOutputTokenStep = async (ctx: BotContext) => {
   }
 };
 const isValidContract = (contract: string): boolean => {
-  return contract.length >= 32 && contract.length <= 44;
+  return contract.length >= 0
 };
 const fetchQuote = async (ctx: BotContext) => {
   const { amount, inputMint, outputMint } = ctx.session.data!;
   const response = await axios.post(
     `http://localhost:${config.PORT}/api/v1/quote/getQuoteOperation`,
-    { amount, inputMint, outputMint }
+    { amount, inputTokenQuery:inputMint, outputTokenQuery:outputMint }
   );
   return response.data; 
 };
 
 const sendQuoteResponse = async (ctx: BotContext, data: any) => {
   if (data.outputAmount) {
-    const inputTokenName = data.input.name
-      ? ` ${data.input.name}`
+    const inputTokenName = data.input.symbol
+      ? ` ${data.input.symbol}`
       : "";
-    const outputTokenName = data.output.name
-      ? ` ${data.output.name}`
+    const outputTokenName = data.output.symbol
+      ? ` ${data.output.symbol}`
       : "";
 
     const formattedMessage = `
-🌟 *Precio de Intercambio* 🌟
+🌟 *Cotización de Intercambio* 🌟
 
 🔄 *Cantidad de entrada*: 
-\`${ctx.session.data!.amount}\` ${inputTokenName} (\`${
-      ctx.session.data!.inputMint
+\`${ctx.session.data!.amount}\`${inputTokenName} (\`${
+  data.input.address
     }\`)
 
-💰 *Precio de salida*: 
-\`${data.outputAmount.toFixed(2)}\` ${outputTokenName} (\`${
-      ctx.session.data!.outputMint
+💰 *Cantidad de salida*: 
+\`${data.outputAmount.toFixed(2)}\`${outputTokenName} (\`${
+  data.output.address
     }\`)
     `;
 
