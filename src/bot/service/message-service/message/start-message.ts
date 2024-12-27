@@ -13,7 +13,7 @@ export const getStartMessage = (_data?: StartMessageModel) => {
         tokenHoldingAmount: 5, 
       };
   const message = {
-    text: `*TotalToStarBot* (vBeta-0.1), tu asistente en criptomonedas. 🚀
+    text: `*Farah Bot* (vBeta-0.1), tu compañero en criptomonedas. 🚀
         
         💼 **Tu billetera**:
         - **Saldo**: ${data.solAmount} SOL 💰

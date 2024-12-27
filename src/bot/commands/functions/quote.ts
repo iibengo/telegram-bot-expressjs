@@ -4,12 +4,10 @@ import { config } from "../../../config/config";
 import { Telegraf } from "telegraf";
 
 export const quote = (bot: Telegraf<BotSessionContext>) => {
-  // Comando "/quote" para iniciar el proceso
   bot.command("quote", async (ctx) => {
-    initializeQuote(ctx); // Inicializa la sesión
+    initializeQuote(ctx); 
   });
 };
-// Inicializa el flujo "quote"
 export const initializeQuote = async (ctx: BotContext) => {
   ctx.session = {
     flow: "quote",
@@ -18,8 +16,6 @@ export const initializeQuote = async (ctx: BotContext) => {
   };
   await ctx.reply("*Cantidad* de entrada:", { parse_mode: "Markdown" });
 };
-
-// Maneja los pasos del flujo "quote"
 export const handleQuoteFlow = async (ctx: BotContext) => {
   switch (ctx.session.step) {
     case 1:
@@ -32,11 +28,10 @@ export const handleQuoteFlow = async (ctx: BotContext) => {
       await handleOutputTokenStep(ctx);
       break;
     default:
-      ctx.session = {}; // Limpia la sesión si algo sale mal
+      ctx.session = {}; 
       break;
   }
 };
-// Paso 1: Captura la cantidad
 const handleAmountStep = async (ctx: BotContext) => {
   const amount = ctx.message.text;
   if (isNaN(Number(amount))) {
@@ -46,11 +41,9 @@ const handleAmountStep = async (ctx: BotContext) => {
   }
 
   ctx.session.data!.amount = amount;
-  ctx.session.step = 2; // Avanza al siguiente paso
+  ctx.session.step = 2; 
   await ctx.reply("*Token* de entrada:", { parse_mode: "Markdown" });
 };
-
-// Paso 2: Captura el token de entrada
 const handleInputTokenStep = async (ctx: BotContext) => {
   const inputMint = ctx.message.text;
   if (!isValidContract(inputMint)) {
@@ -60,11 +53,9 @@ const handleInputTokenStep = async (ctx: BotContext) => {
   }
 
   ctx.session.data!.inputMint = inputMint;
-  ctx.session.step = 3; // Avanza al siguiente paso
+  ctx.session.step = 3;
   await ctx.reply("*Token* de salida:", { parse_mode: "Markdown" });
 };
-
-// Paso 3: Captura el token de salida y obtiene cotización
 const handleOutputTokenStep = async (ctx: BotContext) => {
   const outputMint = ctx.message.text;
   if (!isValidContract(outputMint)) {
@@ -82,26 +73,21 @@ const handleOutputTokenStep = async (ctx: BotContext) => {
     console.error("Error al obtener la cotización:", error);
     await ctx.reply("❌ No se pudo obtener la cotización.");
   } finally {
-    ctx.session = {}; // Limpia la sesión
+    ctx.session = {};
   }
 };
-
-// Validación del contrato
 const isValidContract = (contract: string): boolean => {
   return contract.length >= 32 && contract.length <= 44;
 };
-// Realiza la consulta a la API de cotización
 const fetchQuote = async (ctx: BotContext) => {
   const { amount, inputMint, outputMint } = ctx.session.data!;
   const response = await axios.post(
     `http://localhost:${config.PORT}/api/v1/quote/getQuoteOperation`,
     { amount, inputMint, outputMint }
   );
-
-  return response.data; // Retorna la respuesta de la API
+  return response.data; 
 };
 
-// Envía la cotización al usuario
 const sendQuoteResponse = async (ctx: BotContext, data: any) => {
   if (data.outputAmount) {
     const inputTokenName = data.input.name
