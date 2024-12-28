@@ -1,13 +1,13 @@
 import express, { Request, Response, Express } from "express";
-import { getQuoteOperationService } from "./service/v1/getQuoteOperationService/getQuoteOperationService";
 import bodyParser from "body-parser";
-import { swapOperationService } from "./service/v1/swapOperationService/swapOperationService";
 import { mongooseConnection } from "../database/mongo/connection";
 import cors from "cors";
 import { userRouteList } from "./routes/get-routes";
-import { errorHandler } from "./middlewares/validation/error/error-handler";
 import { AppErrorService } from "./cross/error/app-error";
 import { config } from "../config/config";
+import { getPublicRouteList } from "./routes/get-public-route-list";
+import { validateJWT } from "./middlewares/validation/validate-jwt";
+import { errorHandler } from "./middlewares/error/error-handler";
 /*
 app.post("/api/swap", async (req: Request, res: Response) => {
   try {
@@ -46,7 +46,7 @@ export class ExpressServer {
           } else {
             next(
               AppErrorService.getErrorByMessage("Origen no permitido por CORS")
-            ); 
+            );
           }
         },
         credentials: true,
@@ -69,7 +69,10 @@ export class ExpressServer {
 export const setupRoutes = (app: Express) => {
   // todo: add validatios to routes
   //app.use(publicRouteList.path, publicRouteList.route);
-  // app.all("*", validateJWT);
+  getPublicRouteList().forEach((serviceRoute) => {
+    app.use("/api/v1", serviceRoute);
+  });
+  app.all("*", validateJWT);
   // app.all("*", hasRole(roleList));
   // User routes
   //app.use("/api/v1", hasRole([RoleName.USER, RoleName.ADMIN]));
