@@ -1,11 +1,11 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { validateFields } from "../middlewares/validation/validate-fields";
-import { serviceRouteConfigList } from "./service-route/service-route-list";
+import { userServiceList } from "./service-route/user-route-list";
 import { RoleName } from "../role/role-name";
 import { AppErrorService } from "../cross/error/app-error";
 
 const getRoutesByRole = (role: RoleName): Router[] => {
-  return serviceRouteConfigList
+  return userServiceList
     .filter((serviceConfig) => serviceConfig.role === role)
     .map((serviceConfig) => {
       const router = Router();

@@ -12,7 +12,7 @@ export interface UserSchemaModel extends Document {
   uid: string;
 }
 
-const userSchema = new Schema<UserSchemaModel>({
+const UserSchema = new Schema<UserSchemaModel>({
   userName: {
     type: String,
     required: [true, "El nombre es obligatorio"],
@@ -44,10 +44,10 @@ const userSchema = new Schema<UserSchemaModel>({
   },
 });
 
-userSchema.methods.toJSON = function () {
+UserSchema.methods.toJSON = function () {
   const { __v, password, _id, ...usuario } = this.toObject();
   usuario.uid = _id;
   return usuario;
 };
-const mongoUser = model<UserSchemaModel>("userDbModel", userSchema);
-export { mongoUser };
+const userSchema = model<UserSchemaModel>("userDbModel", UserSchema);
+export { userSchema };

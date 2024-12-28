@@ -1,0 +1,40 @@
+{
+  "/api/v1/task/createUserOperation": {
+    "post": {
+      "summary": "Create user",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "description": "User Email",
+                  "example": "test@test.com",
+                  "minLength": 5
+                },
+                "password": {
+                  "type": "string",
+                  "description": "User password",
+                  "example": "password123",
+                  "minLength": 6
+                }
+              },
+              "required": ["email", "password"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Task retrieval successful"
+        },
+        "400": {
+          "description": "Invalid request"
+        }
+      }
+    }
+  }
+}
